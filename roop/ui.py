@@ -78,41 +78,40 @@ def create_root(start: Callable[[], None], destroy: Callable[[], None]) -> ctk.C
     if roop.globals.target_path:
         select_target_path(roop.globals.target_path)
 
-    source_button = ctk.CTkButton(root, text='Select a face', cursor='hand2', command=lambda: select_source_path())
+    source_button = ctk.CTkButton(root, text='圖片', cursor='hand2', command=lambda: select_source_path())
     source_button.place(relx=0.1, rely=0.4, relwidth=0.3, relheight=0.1)
 
-    target_button = ctk.CTkButton(root, text='Select a target', cursor='hand2', command=lambda: select_target_path())
+    target_button = ctk.CTkButton(root, text='影片', cursor='hand2', command=lambda: select_target_path())
     target_button.place(relx=0.6, rely=0.4, relwidth=0.3, relheight=0.1)
 
     keep_fps_value = ctk.BooleanVar(value=roop.globals.keep_fps)
-    keep_fps_checkbox = ctk.CTkSwitch(root, text='Keep target fps', variable=keep_fps_value, cursor='hand2', command=lambda: setattr(roop.globals, 'keep_fps', not roop.globals.keep_fps))
+    keep_fps_checkbox = ctk.CTkSwitch(root, text='保留幀數', variable=keep_fps_value, cursor='hand2', command=lambda: setattr(roop.globals, 'keep_fps', not roop.globals.keep_fps))
     keep_fps_checkbox.place(relx=0.1, rely=0.6)
 
     keep_frames_value = ctk.BooleanVar(value=roop.globals.keep_frames)
-    keep_frames_switch = ctk.CTkSwitch(root, text='Keep temporary frames', variable=keep_frames_value, cursor='hand2', command=lambda: setattr(roop.globals, 'keep_frames', keep_frames_value.get()))
+    keep_frames_switch = ctk.CTkSwitch(root, text='保留圖片', variable=keep_frames_value, cursor='hand2', command=lambda: setattr(roop.globals, 'keep_frames', keep_frames_value.get()))
     keep_frames_switch.place(relx=0.1, rely=0.65)
 
     skip_audio_value = ctk.BooleanVar(value=roop.globals.skip_audio)
-    skip_audio_switch = ctk.CTkSwitch(root, text='Skip target audio', variable=skip_audio_value, cursor='hand2', command=lambda: setattr(roop.globals, 'skip_audio', skip_audio_value.get()))
+    skip_audio_switch = ctk.CTkSwitch(root, text='關閉音頻', variable=skip_audio_value, cursor='hand2', command=lambda: setattr(roop.globals, 'skip_audio', skip_audio_value.get()))
     skip_audio_switch.place(relx=0.6, rely=0.6)
 
     many_faces_value = ctk.BooleanVar(value=roop.globals.many_faces)
-    many_faces_switch = ctk.CTkSwitch(root, text='Many faces', variable=many_faces_value, cursor='hand2', command=lambda: setattr(roop.globals, 'many_faces', many_faces_value.get()))
+    many_faces_switch = ctk.CTkSwitch(root, text='所有人臉', variable=many_faces_value, cursor='hand2', command=lambda: setattr(roop.globals, 'many_faces', many_faces_value.get()))
     many_faces_switch.place(relx=0.6, rely=0.65)
 
-    start_button = ctk.CTkButton(root, text='Start', cursor='hand2', command=lambda: select_output_path(start))
+    start_button = ctk.CTkButton(root, text='開始', cursor='hand2', command=lambda: select_output_path(start))
     start_button.place(relx=0.15, rely=0.75, relwidth=0.2, relheight=0.05)
 
-    stop_button = ctk.CTkButton(root, text='Destroy', cursor='hand2', command=lambda: destroy())
+    stop_button = ctk.CTkButton(root, text='結束', cursor='hand2', command=lambda: destroy())
     stop_button.place(relx=0.4, rely=0.75, relwidth=0.2, relheight=0.05)
 
-    preview_button = ctk.CTkButton(root, text='Preview', cursor='hand2', command=lambda: toggle_preview())
+    preview_button = ctk.CTkButton(root, text='預覽', cursor='hand2', command=lambda: toggle_preview())
     preview_button.place(relx=0.65, rely=0.75, relwidth=0.2, relheight=0.05)
-
     status_label = ctk.CTkLabel(root, text=None, justify='center')
     status_label.place(relx=0.1, rely=0.9, relwidth=0.8)
 
-    donate_label = ctk.CTkLabel(root, text='^_^ Donate to project ^_^', justify='center', cursor='hand2')
+    donate_label = ctk.CTkLabel(root, text='我的蝦皮商店', justify='center', cursor='hand2')
     donate_label.place(relx=0.1, rely=0.95, relwidth=0.8)
     donate_label.configure(text_color=ctk.ThemeManager.theme.get('RoopDonate').get('text_color'))
     donate_label.bind('<Button>', lambda event: webbrowser.open('https://github.com/sponsors/s0md3v'))
@@ -152,7 +151,7 @@ def select_source_path(source_path: Optional[str] = None) -> None:
     if source_path is None:
         source_path = ctk.filedialog.askopenfilename(title='select an source image', initialdir=RECENT_DIRECTORY_SOURCE)
     if is_image(source_path):
-        roop.globals.source_path = source_path
+        roop.globals.source_path = source_path  # type: ignore
         RECENT_DIRECTORY_SOURCE = os.path.dirname(roop.globals.source_path)
         image = render_image_preview(roop.globals.source_path, (200, 200))
         source_label.configure(image=image)
@@ -170,12 +169,12 @@ def select_target_path(target_path: Optional[str] = None) -> None:
     if target_path is None:
         target_path = ctk.filedialog.askopenfilename(title='select an target image or video', initialdir=RECENT_DIRECTORY_TARGET)
     if is_image(target_path):
-        roop.globals.target_path = target_path
+        roop.globals.target_path = target_path  # type: ignore
         RECENT_DIRECTORY_TARGET = os.path.dirname(roop.globals.target_path)
         image = render_image_preview(roop.globals.target_path, (200, 200))
         target_label.configure(image=image)
     elif is_video(target_path):
-        roop.globals.target_path = target_path
+        roop.globals.target_path = target_path  # type: ignore
         RECENT_DIRECTORY_TARGET = os.path.dirname(roop.globals.target_path)
         video_frame = render_video_preview(target_path, (200, 200))
         target_label.configure(image=video_frame)
@@ -273,8 +272,8 @@ def update_preview(frame_number: int = 0) -> None:
 
 def update_face_reference(steps: int) -> None:
     clear_face_reference()
-    reference_frame_number = int(preview_slider.get())
-    roop.globals.reference_face_position += steps
+    reference_frame_number = preview_slider.get()
+    roop.globals.reference_face_position += steps  # type: ignore
     roop.globals.reference_frame_number = reference_frame_number
     update_preview(reference_frame_number)
 
